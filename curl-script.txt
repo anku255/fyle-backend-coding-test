@@ -1,0 +1,6 @@
+
+curl -H "Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImlkIjoxMjMsIm5hbWUiOiJKb2huIERvZSJ9LCJleHAiOjE1NjU4OTc4MjB9.1zV88TtV74BfFI2RCu9kjlJUOuhZHlIp86Zi1ZFhyvo" https://pacific-thicket-36555.herokuapp.com/api/bank?ifsc=ABHY0065001
+
+
+
+curl -G -H "Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImlkIjoxMjMsIm5hbWUiOiJKb2huIERvZSJ9LCJleHAiOjE1NjU4OTc4MjB9.1zV88TtV74BfFI2RCu9kjlJUOuhZHlIp86Zi1ZFhyvo" https://pacific-thicket-36555.herokuapp.com/api/branches --data-urlencode "bank_name=ABHYUDAYA COOPERATIVE BANK LIMITED" --data-urlencode "city=MUMBAI" --data-urlencode "limit=2"
