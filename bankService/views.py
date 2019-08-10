@@ -1,19 +1,14 @@
-import psycopg2
 import jwt
 import os
 import datetime
 import json
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseServerError
-from psycopg2.extras import NamedTupleCursor
+from bankService.db.db_helpers import connectToDB
 from bankService.jwt.jwt_helpers import authorizeRequest, generateToken
 from bankService.jwt.custom_errors import UnauthorizedError, InvalidOrExpiredTokenError
 
-# Connect to an existing database
-conn = psycopg2.connect("dbname={} user={}".format(
-    os.environ.get('DB_NAME'), os.environ.get('DB_USER')))
+conn, cur = connectToDB()
 
-# Open a cursor to perform database operations
-cur = conn.cursor()
 
 # GET Request
 # Public
@@ -28,6 +23,7 @@ def index(request):
     2. GET -  /api/branches?bank_name="bank_name"&city="city"
     3. GET - /api/token
     """)
+
 
 # GET Request
 # Public
