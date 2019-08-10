@@ -22,16 +22,43 @@ def index(request):
 # Returns the Bank details as JSON given an IFSC code
 def getBankDetails(request):
   ifsc = request.GET.get('ifsc', '')
+  limit = request.GET.get('limit', 10)  # Default limit = 10
+  offset = request.GET.get('offset', 0)  # Default offset = 0
 
   if not ifsc:
     return HttpResponseBadRequest("Please provide ifsc code as query param.")
 
   try:
-    cur.execute("""SELECT * FROM bank_branches WHERE ifsc=(%s);""",
-                (ifsc,))
-    json = getJSONResponseForBankDetails(cur.fetchone())
-    return JsonResponse(json)
-  except:
+    cur.execute("""SELECT * FROM bank_branches WHERE ifsc=(%s) LIMIT (%s) OFFSET (%s);""",
+                (ifsc, limit, offset,))
+    json = getJSONResponseForBankDetails(cur.fetchall())
+    return JsonResponse(json, safe=False)
+  except Exception as e:
+    print('error', e)
+    return HttpResponseServerError("Something went wrong. Please try again.")
+
+
+# GET Request
+# Private
+# Returns the Branch details as JSON given a bank name and a city
+def getBranchDetails(request):
+  bank_name = request.GET.get('bank_name', '')
+  city = request.GET.get('city', '')
+  limit = request.GET.get('limit', 10)  # Default limit = 10
+  offset = request.GET.get('offset', 0)  # Default offset = 0
+
+  if not bank_name:
+    return HttpResponseBadRequest("Please provide bank_name as query param.")
+  if not city:
+    return HttpResponseBadRequest("Please provide city as query param.")
+
+  try:
+    cur.execute("""SELECT * FROM bank_branches WHERE bank_name=(%s) AND city=(%s) LIMIT (%s) OFFSET (%s);""",
+                (bank_name, city, limit, offset,))
+    json = getJSONResponseForBankDetails(cur.fetchall())
+    return JsonResponse(json, safe=False)
+  except Exception as e:
+    print('error', e)
     return HttpResponseServerError("Something went wrong. Please try again.")
 
 
@@ -42,15 +69,19 @@ def getJSONResponseForBankDetails(queryResponse):
   colnames = {'ifsc': 0, 'bank_id': 1, 'branch': 2, 'address': 3,
               'city': 4, 'district': 5, 'state': 6, 'bank_name': 7}
 
-  resultJson = {}
+  resultJson = []
 
-  resultJson['bank_id'] = queryResponse[colnames['bank_id']]
-  resultJson['bank_name'] = queryResponse[colnames['bank_name']]
-  resultJson['ifsc'] = queryResponse[colnames['ifsc']]
-  resultJson['branch'] = queryResponse[colnames['branch']]
-  resultJson['address'] = queryResponse[colnames['address']]
-  resultJson['city'] = queryResponse[colnames['city']]
-  resultJson['district'] = queryResponse[colnames['district']]
-  resultJson['state'] = queryResponse[colnames['state']]
+  for row in queryResponse:
+    jsonRow = {}
+    jsonRow['bank_id'] = row[colnames['bank_id']]
+    jsonRow['bank_name'] = row[colnames['bank_name']]
+    jsonRow['ifsc'] = row[colnames['ifsc']]
+    jsonRow['branch'] = row[colnames['branch']]
+    jsonRow['address'] = row[colnames['address']]
+    jsonRow['city'] = row[colnames['city']]
+    jsonRow['district'] = row[colnames['district']]
+    jsonRow['state'] = row[colnames['state']]
+
+    resultJson.append(jsonRow)
 
   return resultJson
