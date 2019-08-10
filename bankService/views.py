@@ -1,6 +1,6 @@
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseServerError
 import psycopg2
 import os
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseServerError
 from psycopg2.extras import NamedTupleCursor
 
 
@@ -11,10 +11,16 @@ conn = psycopg2.connect("dbname={} user={}".format(
 # Open a cursor to perform database operations
 cur = conn.cursor()
 
-
-# TODO: Add available routes in the index
+# GET Request
+# Private
+# Returns the list of available routes
 def index(request):
-  return HttpResponse("Hello, world. You're at the index of bank service api.")
+  return HttpResponse("""
+    You're at the index of bank service api.
+    Try the following routes:
+    1. GET -  /api/bank?ifsc="bank_ifsc_code"
+    2. GET -  /api/branches?bank_name="bank_name"&city="city"
+    """)
 
 
 # GET Request
